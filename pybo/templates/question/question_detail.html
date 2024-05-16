@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% if question %}
+<div class="container my-3">
+    <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">{{question.subject}}</h5>
+          
+          <p class="card-text">{{question.content}}</p>
+          <div class="d-flex justify-content-end">
+            {{question.user.username}} |
+            {{question.create_date | datetime }}
+          </div>
+          <a href="{{url_for('main.index')}}" class="card-link">목록</a>
+
+          {% if g.user == question.user %}
+          <a href="{{url_for('question.update',question_id=question.id)}}" class="card-link">수정</a>
+          <a href="{{url_for('question.delete',question_id=question.id)}}" class="delete card-link">삭제</a>
+          {%endif%}
+        </div>
+    </div>
+
+    <h4 class="border-bottom my-3 py-2">{{question.answer_set | length}} 개의 답글이 있음</h4>
+    <div id="replies">
+
+    
+    {% for answer in question.answer_set %}
+    <div class="card my-3">
+        <div class="card-body">
+          <p class="card-text">{{answer.content}}</p>
+          <div class="d-flex justify-content-end">
+            {{answer.user.username}} |
+            {{answer.create_date | datetime}}
+          </div>
+          {% if g.user == question.user %}
+          <a href="{{url_for('answer.update',answer_id=answer.id)}}" class="card-link">수정</a>
+          <a href="{{url_for('answer.delete',answer_id=answer.id)}}" class="delete card-link">삭제</a>
+          {%endif%}
+        </div>
+    </div>
+    {% endfor %}
+   </div>
+
+</div>
+
+<form method="post" action="{{url_for('answer.create',question_id=question.id)}}">
+    {{form.csrf_token}}
+
+
+    {% if form.errors %}
+
+      <div>
+        {% for field, errors in form.errors.items()%}
+          <p>{{form[field].label}}</p>
+          {% for error in errors %}
+          <p>{{error}}</p>
+          {%endfor%}
+        {% endfor %}
+
+      </div>
+
+      {%endif%}
+    <input type="hidden", name="user_id" value="{{g.user.id}}">
+    
+    <textarea {%if not g.user %}disabled{%endif%} name="content" rows="10">{%if not g.user %}로그인 후 사용{%endif%}</textarea>
+    <button>답글 등록</button>
+</form>
+{% else %}
+<p>데이터가 없습니다.</p>
+{% endif %}
+
+
+
+{% endblock %}
+
+{%block script%}
+<script>
+$(Document).ready(function(){
+  $(".delete").click(function(event){
+    event.preventDefault();
+    let areyousure = confirm("정말로 삭제할래요?");
+
+    if(areyousure){
+      location.href = $(this).attr("href") // input 태그는 val()
+
+      
+    };
+
+  });
+
+
+});
+</script>
+{%endblock%}

@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% if question_list %}
+<div class="container">
+
+    <table class="table my-3">
+        <thead>
+          <tr>
+            <th scope="col">번호</th>
+            <th scope="col">제목</th>
+            <th scope="col">작성자</th>
+            <th scope="col">작성일</th>
+          </tr>
+        </thead>
+        <tbody>
+
+            {% for question in question_list %}
+          <tr>
+            <td>{{(question_list.page - 1) * question_list.per_page + loop.index}}</td>
+            <td>
+                <a href="{{url_for('question.detail', question_id=question.id)}}">
+                    {{question.subject}}
+                </a>
+            </td>
+            <td>
+              {{question.user.username}}
+            </td>
+            <td>{{question.create_date  | datetime}}</td>
+          </tr> 
+            {% endfor %}
+
+        </tbody>
+      </table>
+
+      {%include "paging_part.html"%}
+
+      
+      <a href="{{url_for('question.create')}}">질문등록</a>
+
+     
+
+</div>
+{% else %}
+<p> 등록된 질문이 없습니다.</p>
+{% endif %}
+
+<div id ="show_weather">
+  <div>
+    <span>강수형태</span>
+    <span id ="PTY"></span>
+
+  </div>
+  <div>
+    <span>기온</span>
+    <span id ="T1H"></span>
+
+  </div>
+
+
+</div>
+
+<input type = "hidden" id="city" value="/서울 강동구 천호제1동">
+
+<div>
+  <iframe src="http://127.0.0.1:5000/test/seoul_tic">
+</div>
+
+{% endblock %}
+
+{%block script%}
+<script>
+
+$(Document).ready(function(){
+  getWeather();
+
+
+});
+
+function getWeather(){
+  let date = new Date();
+  let year = date.getFullYear();
+  let month = date.getMonth() + 1;
+  month = month<10? "0" + month:month+""
+  let day = date.getDate()+"";
+  day = day<10?"0"+day:day+""
+  s_date = year+month+day
+  $.getJSON("/weather/item/"+s_date+"/서울 강동구 천호제1동",function(result){
+    let PTY = result[0]["obsrValue"]
+    let T1H = result[3]["obsrValue"]
+
+    
+
+    condition={
+        "0":"없음",
+        "1":"비",
+        "2":"비/눈",
+        "3":"눈",
+        "5":"빗방울",
+        "6":"빗방울눈날림",
+        "7":"눈날림"
+    }
+
+    
+
+    $("#PTY").text(condition[PTY]);
+    $("#T1H").text(T1H);
+
+
+    
+
+
+
+  });
+
+
+  }
+
+</script>
+
+{%endblock%}
