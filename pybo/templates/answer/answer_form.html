@@ -1,0 +1,36 @@
+{%extends 'base.html'%}
+
+{%block content%}
+<h5>답변 수정</h5>
+
+
+<form method="post" class="my-4">
+  {{form.csrf_token}}
+  
+  {%include "form_errors.html"%}
+  
+  <input type ="hidden" name="user_id" value="{{g.user.id}}">
+      
+  <div class="mb-3">
+    <label for="content" class="form-label">내용</label>
+    <textarea name="content" id="content" rows="10">{{form.content.data or ''}}</textarea>
+  </div>
+      
+  <button type="submit" class="btn btn-primary">{{'수정' if g.is_update else '등록'}}</button>
+</form>
+
+
+
+
+
+{%endblock%}
+{%block script%}
+<script>
+$(Document).ready(function(){
+
+
+
+});
+</script>
+
+{%endblock%}
