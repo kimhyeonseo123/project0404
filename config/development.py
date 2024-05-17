@@ -1,7 +1,4 @@
-import os
-
-#폴더
-BASE_DIR = os.path.dirname(__file__)
+from config.default import *
 
 SQLALCHEMY_DATABASE_URI = 'sqlite:///{}'.format(
     os.path.join(BASE_DIR,'pybo.db')

@@ -1,8 +1,8 @@
 from flask import Flask
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
-import config
 from sqlalchemy import MetaData
+
 
 naming_convention = {
     'ix':'ix_%(column_0_label)s',
@@ -20,7 +20,7 @@ migrate = Migrate()
 def create_app():
     app = Flask(__name__)
 
-    app.config.from_object(config)
+    app.config.from_envvar("APP_CONFIG_FILE")
     db.init_app(app)
    # migrate.init_app(app,db)
     if app.config["SQLALCHEMY_DATABASE_URI"].startswith("sqlite"):
